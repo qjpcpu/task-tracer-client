@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# build coffee into js
+gulp
+# compile js into single executable file
+# you should install nexe first:
+# git clone git@github.com:jaredallard/nexe.git
+# cd nexe && npm install
+# ln -sv to the nexe binary in bin
+nexe -i tmp/index.js -o dist/tt."`echo $OSTYPE | grep -oE '^[a-zA-Z]+'`" -r 5.5.0
