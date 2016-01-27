@@ -96,9 +96,13 @@ socketInit = (socketCallback) ->
     log 'ttServer connected!'
   
   socket.on 'authenticated', (data) ->
-    log 'authenticated ok',data
-    console.error "View #{data.httpUrl} for task output"
-    socketCallback null,socket
+    log 'authenticated finish',data
+    if data.error
+      console.error data.error
+      socketCallback data.error
+    else
+      console.error "View #{data.httpUrl} for task output"
+      socketCallback null,socket
   
   socket.on 'disconnect', ->
     log 'disconnect from ttServer!'
