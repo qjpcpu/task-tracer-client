@@ -7,7 +7,9 @@ childprocess = require 'child_process'
 moment = require 'moment'
 log = debug 'tt'
 
-app = {}
+app = 
+  error:
+    code: 1
 
 parseCli = ->
   program = 
@@ -17,7 +19,7 @@ parseCli = ->
   argsList = process.argv[2..]
   unless program.cmd?.length > 0
     console.error 'no command found'
-    process.exit 1
+    process.exit app.error.code
   program
 
 
@@ -54,7 +56,7 @@ configInit = (appCallback) ->
   ], (err) ->
     if err
       console.error err 
-      process.exit 1
+      process.exit app.error.code
     else
       log "app config:",app
       appCallback() if appCallback? and typeof appCallback == 'function'
@@ -76,7 +78,8 @@ taskInit = (socket,taskCallback) ->
 
   job.on 'close', (code) ->
     socket.emit 'eof',code: code
-    console.error "#{app.task.name} exit with code #{code}"
+    log "#{app.task.name} exit with code #{code}"
+    app.error.code = code
 
   taskCallback null,job
   
@@ -107,7 +110,7 @@ socketInit = (socketCallback) ->
   socket.on 'disconnect', ->
     log 'disconnect from ttServer!'
     socketCallback 'disconnect from ttServer!'
-    process.exit 1
+    process.exit app.error.code
 
   socket.on 'connect_timeout', ->
     log "connect timeout"
@@ -129,7 +132,7 @@ appInit = ->
   ], (err) ->
     if err
       log 'fail to start tt'
-      process.exit 1
+      process.exit app.error.code
     else 
       log 'tt started OK!'
 
