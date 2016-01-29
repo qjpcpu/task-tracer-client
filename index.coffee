@@ -66,27 +66,42 @@ taskInit = (socket,taskCallback) ->
   log "start to run task[#{app.task.name}]"
   log app.task.cmd
   job = childprocess.spawn 'bash', ['-c',app.task.cmd],app.task.env
+  # capture system signal
+  jobAbort = (signal) ->
+    log "job abort with signal #{signal}"
+    app.error.code = 2
+    socket.emit 'eof',code: app.error.code,message: "Task abort with signal #{signal}"
+    process.exit app.error.code
+
+  process.on 'SIGHUP', -> jobAbort('SIGHUP')
+  process.on 'SIGINT', -> jobAbort('SIGINT')
+  process.on 'SIGQUIT', -> jobAbort('SIGQUIT')
+  process.on 'SIGABRT', -> jobAbort('SIGABRT')
+  process.on 'SIGTERM', -> jobAbort('SIGTERM')
+
   job.stdout.on 'data', (data) ->
     line = new Buffer(data).toString()
     socket.emit 'data',type: 'STDOUT',data: line
-    console.log line
+    process.stdout.write line
 
   job.stderr.on 'data', (data) ->
     line = new Buffer(data).toString()
     socket.emit 'data',type: 'STDERR',data: line
-    console.error line
+    process.stderr.write line
 
   job.on 'close', (code) ->
     socket.emit 'eof',code: code
     log "#{app.task.name} exit with code #{code}"
     app.error.code = code
+    process.exit app.error.code
 
   taskCallback null,job
   
 
 socketInit = (socketCallback) ->
   log "try to connect #{app.config.url}"
-  
+  # 防止断线重连后启动新进程
+  connState = null
   socket = socketio app.config.url
 
   socket.on 'connect', ->
@@ -104,22 +119,25 @@ socketInit = (socketCallback) ->
       console.error data.error
       socketCallback data.error
     else
-      console.error "View #{data.httpUrl} for task output"
-      socketCallback null,socket
+      if connState
+        console.error "Reconnect ttServer OK"
+      else
+        console.error "View #{data.httpUrl} for task output"
+        socketCallback null,socket
+      connState = 'OK'
   
   socket.on 'disconnect', ->
     log 'disconnect from ttServer!'
-    socketCallback 'disconnect from ttServer!'
-    process.exit app.error.code
+    socketCallback 'disconnect from ttServer!'  unless connState
 
   socket.on 'connect_timeout', ->
     log "connect timeout"
-    socketCallback "connect ttServer timeout"
+    socketCallback "connect ttServer timeout"  unless connState
 
   socket.on 'connect_error', (err) ->
     log 'connect_error',err
     console.error "Can't connect to ttServer!"
-    socketCallback "connect ttServer fail!"
+    socketCallback "connect ttServer fail!"  unless connState
 
 appInit = ->
   async.waterfall [
