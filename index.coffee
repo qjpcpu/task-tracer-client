@@ -70,7 +70,7 @@ taskInit = (socket,taskCallback) ->
   jobAbort = (signal) ->
     log "job abort with signal #{signal}"
     app.error.code = 2
-    socket.emit 'eof',code: app.error.code,message: "Task abort with signal #{signal}"
+    socket.emit 'eof',code: app.error.code,signal: signal
     process.exit app.error.code
 
   process.on 'SIGHUP', -> jobAbort('SIGHUP')
