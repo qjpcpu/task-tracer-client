@@ -93,7 +93,7 @@ taskInit = (socket,taskCallback) ->
     socket.emit 'eof',code: code
     log "#{app.task.name} exit with code #{code}"
     app.error.code = code
-    process.exit app.error.code
+    setTimeout (-> process.exit app.error.code),5000
 
   taskCallback null,job
   
@@ -126,6 +126,10 @@ socketInit = (socketCallback) ->
         socketCallback null,socket
       connState = 'OK'
   
+  socket.on 'bye', (data) ->
+    log "Bye ttServer!"
+    process.exit app.error.code
+
   socket.on 'disconnect', ->
     log 'disconnect from ttServer!'
     socketCallback 'disconnect from ttServer!'  unless connState
