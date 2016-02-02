@@ -16,7 +16,9 @@ parseCli = ->
     env: process.env
     name: process.env.TASK_TRACER_NAME or moment().format('YYYYMMDDHHmmss')
     cmd: process.argv[2..].join(' ')
-  argsList = process.argv[2..]
+  unless /^[\da-zA-Z][\d_-a-zA-Z\.]*/.test program.name
+    console.error "invalid task name[#{program.name}]"
+    program.exit app.error.code
   unless program.cmd?.length > 0
     console.error 'no command found'
     process.exit app.error.code
