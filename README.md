@@ -1,4 +1,10 @@
-# task-tracer-client
+TaskTracer(client) - Real-time process monitoring
+=================================================
+
+Powered by [node.js](http://nodejs.org) + [socket.io](http://socket.io)
+
+## How does it work?
+*tt(task tracer client)* capture process output(both stdout & stderr) and send the data to *ttServer* via socket.io, browser or your own socketio client can get these data via socket.io realtime.
 
 ## Install
 
@@ -21,6 +27,20 @@ npm install
 ./install
 # 4. find the binary file tt.* under ./dist
 ```
+
+## Configuration file
+
+*tt* would load config file from `$HOME/.tt.conf` or `/etc/tt.conf`, the `tt.conf` is an ini config file looks like below:
+
+```
+id = 361
+token = eyjkjlkl32
+url = http://tt-server.com
+```
+
+1. *id*: tt client identifier
+2. *token*: tt client use for authentication, which generated from ttServer
+3. *url*: ttServer address
 
 ## Usage
 ### simple command
