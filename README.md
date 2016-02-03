@@ -1,10 +1,10 @@
-TaskTracer(client) - Real-time process monitoring
+TaskTracer(server) - Real-time process monitoring
 =================================================
 
-Powered by [node.js](http://nodejs.org) + [socket.io](http://socket.io)
+Powered by [node.js](http://nodejs.org) + [socket.io](http://socket.io) + [nexe](https://jaredallard.me/nexe)
 
 ## How does it work?
-*tt(task tracer client)* capture process output(both stdout & stderr) and send the data to *ttServer* via socket.io, browser or your own socketio client can get these data via socket.io realtime.
+*tt(task tracer client)* capture process output(both stdout & stderr) and send the data to *ttServer* via socket.io, browser or your own socketio client can get these data realtime.
 
 ## Install
 
