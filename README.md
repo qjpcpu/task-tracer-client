@@ -46,15 +46,15 @@ url = http://tt-server.com
 ### simple command
 
 ```
-tt ls
-tt 'echo hello'
-tt 'top'
+tt -n test ls
+tt -n test 'echo hello'
+tt -n test 'top'
 ```
 
 ### run complex command
 
 ```
-tt "$(cat << 'TASKTRACERCLIENTEOF'
+tt -n complex "$(cat << 'TASKTRACERCLIENTEOF'
   echo "$DEBUG";echo 'a b c'|awk '{print $2" "$1}'
   a=123
 if [ "$a" -gt 23 ];then
@@ -69,8 +69,7 @@ TASKTRACERCLIENTEOF
 ### set task name
 
 ```
-export TASK_TRACER_NAME=test
-tt ls -l
+tt -n myname ls -l
 # or
 TASK_TRACER_NAME=test tt ls -l
 ```
