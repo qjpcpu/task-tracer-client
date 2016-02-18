@@ -7,4 +7,4 @@ gulp
 # git clone git@github.com:jaredallard/nexe.git
 # cd nexe && npm install
 # ln -sv to the nexe binary in bin
-nexe -i tmp/index.js -o dist/tt."`echo $OSTYPE | grep -oE '^[a-zA-Z]+'`" -r 5.5.0
+nexe -f true -i tmp/index.js -o dist/tt."`echo $OSTYPE | grep -oE '^[a-zA-Z]+'`" -r 5.5.0

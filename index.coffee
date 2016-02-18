@@ -11,11 +11,20 @@ app =
   error:
     code: 1
 
+printHelp = ->
+  console.log 'Usage: tt -n NAME COMMAND'
+
 parseCli = ->
-  program = 
-    env: process.env
-    name: process.env.TASK_TRACER_NAME or moment().format('YYYYMMDDHHmmss')
-    cmd: process.argv[2..].join(' ')
+  if process.argv[2] == '-n' or process.argv[2] == '--name'
+    program = 
+      env: process.env
+      name: process.argv[3]
+      cmd: process.argv.slice(4).join(' ')
+  else
+    program = 
+      env: process.env
+      name: process.env.TASK_TRACER_NAME or moment().format('YYYYMMDDHHmmss')
+      cmd: process.argv[2..].join(' ')
   unless /^[\da-zA-Z][\d_-a-zA-Z\.]*/.test program.name
     console.error "invalid task name[#{program.name}]"
     program.exit app.error.code
@@ -147,6 +156,12 @@ socketInit = (socketCallback) ->
 
 appInit = ->
   async.waterfall [
+    (cb) ->
+      if process.argv.length == 2 or process.argv[2] == '-h' or process.argv[2] == '--help'
+        printHelp()
+        app.error.code = 0
+        process.exit app.error.code
+      cb()
     (cb) ->
       configInit -> cb()
     (cb) ->
