@@ -43,12 +43,20 @@ url = http://tt-server.com
 3. *url*: ttServer address
 
 ## Usage
+### help
+
+```
+tt -n TASK_NAME COMMAND-STRING
+# show help
+tt --help
+```
+
 ### simple command
 
 ```
-tt -n test ls
-tt -n test 'echo hello'
-tt -n test 'top'
+tt -n test1 ls
+tt -n test2 'echo hello'
+tt -n test3 'top'
 ```
 
 ### run complex command
